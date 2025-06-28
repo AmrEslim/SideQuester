@@ -43,14 +43,10 @@ No more endless texts that won't send, confusing "meet at the main stage" plans,
 - **GPS Module** (NEO-6M, NEO-8M, or NEO-9M)
 - **Digital Compass/Magnetometer** (HMC5883L or MPU9250)
 - **OLED Display** (128x64 SSD1306 or similar)
-- **Servo Motor** (SG90 or similar) for physical compass needle
 - **Battery Pack** (Li-ion 18650 with charging circuit)
 - **Breadboard/PCB** for connections
 - **Jumper wires and resistors**
 
-### Estimated Cost
-- **Per Device**: ~$45-60 USD
-- **Complete Pair**: ~$90-120 USD
 
 ## 🚀 Quick Start Guide
 
@@ -96,14 +92,6 @@ SDA → GPIO21 (I2C, shared with compass)
 SCL → GPIO22 (I2C, shared with compass)
 ```
 
-#### Servo Motor
-```
-SG90 → ESP32
-VCC → 5V (external power recommended)
-GND → GND
-Signal → GPIO13 (PWM capable)
-```
-
 ### 2. Software Installation
 
 #### Required Libraries (install via Arduino IDE Library Manager):
@@ -113,7 +101,6 @@ Signal → GPIO13 (PWM capable)
 #include <Wire.h>              // I2C communication
 #include <Adafruit_SSD1306.h>  // OLED display
 #include <Adafruit_HMC5883_U.h> // Magnetometer
-#include <Servo.h>             // Servo control
 ```
 
 ### 3. Configuration Parameters
@@ -133,8 +120,7 @@ Signal → GPIO13 (PWM capable)
 
 // Compass Configuration
 #define COMPASS_DECLINATION 4.5  // Adjust for your location
-#define SERVO_MIN_ANGLE 0
-#define SERVO_MAX_ANGLE 180
+
 ```
 
 ### 4. Upload and Test
@@ -158,8 +144,6 @@ Device A (Friend 1)              Device B (Friend 2)
       ↓                                ↓
 Calculate Bearing              Calculate Bearing
       ↓                                ↓
- Servo Compass                  Servo Compass
-      ↓                                ↓
  OLED Display                   OLED Display
 ```
 
@@ -168,7 +152,6 @@ Calculate Bearing              Calculate Bearing
 1. **GPS Acquisition**: Each device continuously reads its GPS coordinates
 2. **Data Transmission**: Coordinates are sent via LoRa radio every 5 seconds
 3. **Bearing Calculation**: Using the Haversine formula to calculate direction and distance
-4. **Compass Control**: Servo motor positions needle to point toward friend
 5. **Display Update**: OLED shows distance, direction, and system status
 
 ### Data Packet Structure
@@ -179,7 +162,6 @@ Calculate Bearing              Calculate Bearing
 ### Mathematical Calculations
 - **Haversine Formula** for distance calculation
 - **Bearing Calculation** for direction
-- **Servo Angle Mapping** (0-180° rotation)
 
 ## 📊 Display Information
 
@@ -221,7 +203,6 @@ This project is currently in development. See our [detailed roadmap](https://git
 
 #### Phase 4: User Interface & Display
 - [ ] OLED display layout design
-- [ ] Servo compass control
 - [ ] Status indicators
 - [ ] User feedback systems
 
@@ -355,7 +336,7 @@ SideQuester/
 │   ├── config.h              # Configuration parameters
 │   ├── gps_module.h/.cpp     # GPS handling functions
 │   ├── lora_module.h/.cpp    # LoRa communication
-│   ├── compass_module.h/.cpp # Magnetometer and servo control
+│   ├── compass_module.h/.cpp # Magnetometer
 │   ├── display_module.h/.cpp # OLED display functions
 │   └── math_utils.h/.cpp     # Bearing calculations
 ├── docs/
@@ -366,7 +347,7 @@ SideQuester/
 ├── examples/
 │   ├── gps_test/            # Test GPS module individually
 │   ├── lora_test/           # Test LoRa communication
-│   ├── compass_test/        # Test compass and servo
+│   ├── compass_test/        # Test compass 
 │   └── display_test/        # Test OLED display
 ├── hardware/
 │   ├── schematics/          # Circuit diagrams
@@ -399,7 +380,6 @@ SideQuester/
 
 #### Compass Not Pointing Correctly
 - Calibrate magnetometer away from metal objects
-- Check servo wiring and power supply
 - Verify magnetic declination setting for your location
 - Ensure compass module is level and properly oriented
 
