@@ -51,18 +51,21 @@ No more endless texts that won't send, confusing "meet at the main stage" plans,
 ## 🚀 Quick Start Guide
 
 ### 1. Hardware Assembly
-Wire the components according to this connection guide:
+Wire the components according to this connection guide. For detailed wiring instructions, troubleshooting, and complete system diagrams, see [Hardware Wiring Guide](docs/HARDWARE_WIRING.md).
 
 #### ESP32 to E22-900M30S LoRa Module
 ```
 E22-900M30S → ESP32
 VCC → 3.3V
 GND → GND
-M0 → GPIO4 (mode control)
-M1 → GPIO5 (mode control)
-RXD → GPIO16 (software serial TX)
-TXD → GPIO17 (software serial RX)
-AUX → GPIO18 (auxiliary control)
+NSS → GPIO15 (Chip Select)
+SCK → GPIO14 (SPI Clock)
+MISO → GPIO12 (Data from module)
+MOSI → GPIO13 (Data to module)
+DIO1 → GPIO4 (Interrupt/Status)
+BUSY → GPIO18 (Module ready status)
+NRST → GPIO19 (Reset - optional, can tie to 3.3V)
+ANT → External antenna connection
 ```
 
 #### GPS Module to ESP32
@@ -96,7 +99,8 @@ SCL → GPIO22 (I2C, shared with compass)
 
 #### Required Libraries (install via Arduino IDE Library Manager):
 ```cpp
-#include <SoftwareSerial.h>    // For LoRa and GPS communication
+#include <RadioLib.h>          // For LoRa SPI communication
+#include <SoftwareSerial.h>    // For GPS communication
 #include <TinyGPS++.h>         // GPS parsing
 #include <Wire.h>              // I2C communication
 #include <Adafruit_SSD1306.h>  // OLED display
@@ -340,7 +344,7 @@ SideQuester/
 │   ├── display_module.h/.cpp # OLED display functions
 │   └── math_utils.h/.cpp     # Bearing calculations
 ├── docs/
-│   ├── HARDWARE_GUIDE.md     # Detailed wiring instructions
+│   ├── HARDWARE_WIRING.md    # Complete wiring instructions & troubleshooting
 │   ├── SOFTWARE_GUIDE.md     # Code documentation
 │   ├── TROUBLESHOOTING.md    # Common issues and solutions
 │   └── API_REFERENCE.md      # Function documentation
