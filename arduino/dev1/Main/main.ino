@@ -1,5 +1,8 @@
 #include <TinyGPS++.h>
 #include <HardwareSerial.h>
+#include <TFT_eSPI.h>
+
+
 
 // GPS setup
 #define GPS_TX_PIN 33
@@ -12,6 +15,9 @@
 // Objects
 TinyGPSPlus gps;
 HardwareSerial E220(2); // Use UART2 for LoRa
+// TFT display object
+TFT_eSPI tft = TFT_eSPI();
+
 
 // GPS data variables
 float latitude = 0.0;
@@ -24,12 +30,89 @@ unsigned long lastLoRaTransmit = 0;
 const unsigned long GPS_READ_INTERVAL = 500;    // Read GPS every 0.5 seconds
 const unsigned long LORA_TRANSMIT_INTERVAL = 5000; // Transmit every 5 seconds
 
+//received location data 
+String remoteLatStr = "N/A";
+String remoteLonStr = "N/A";
+float remoteDistance = 0.0;
+bool remoteDataReceived = false;
+
+//display update function
+void updateDisplay() {
+  tft.fillScreen(TFT_BLACK);
+  tft.setTextColor(TFT_WHITE);
+  tft.setTextSize(1);
+  
+  // Title
+  tft.setCursor(70, 10);
+  tft.setTextSize(2);
+  tft.setTextColor(TFT_CYAN);
+  tft.println("SideQuester");
+  
+  // Local GPS Status
+  tft.setTextSize(1);
+  tft.setTextColor(TFT_GREEN);
+  tft.setCursor(10, 40);
+  tft.println("Local GPS:");
+  
+  tft.setTextColor(TFT_WHITE);
+  tft.setCursor(10, 55);
+  if (gpsFixed) {
+    tft.print("Lat: ");
+    tft.println(latitude, 4);
+    tft.setCursor(10, 70);
+    tft.print("Lon: ");
+    tft.println(longitude, 4);
+    tft.setCursor(10, 85);
+    tft.print("Sats: ");
+    tft.print(gps.satellites.value());
+  } else {
+    tft.setTextColor(TFT_RED);
+    tft.println("No Fix");
+  }
+  
+  // Remote Device Status
+  tft.setTextColor(TFT_YELLOW);
+  tft.setCursor(10, 110);
+  tft.println("Remote Device:");
+  
+  tft.setTextColor(TFT_WHITE);
+  if (remoteDataReceived) {
+    tft.setCursor(10, 125);
+    tft.print("Lat: ");
+    tft.println(remoteLatStr);
+    tft.setCursor(10, 140);
+    tft.print("Lon: ");
+    tft.println(remoteLonStr);
+    tft.setCursor(10, 155);
+    tft.print("Distance: ");
+    tft.print(remoteDistance, 2);
+    tft.println(" km");
+  } else {
+    tft.setCursor(10, 125);
+    tft.setTextColor(TFT_ORANGE);
+    tft.println("Waiting...");
+  }
+  
+  // Status indicator
+  tft.fillCircle(120, 220, 8, gpsFixed ? TFT_GREEN : TFT_RED);
+}
 void setup() {
   Serial.begin(115200);
   delay(1000);
-  
+
+  Serial.println("=== Display initialization ===");
   Serial.println("=== GPS + LoRa Location Transmitter ===");
   Serial.println("Initializing GPS and LoRa modules...");
+  // Initialize TFT display
+  tft.init();
+  tft.setRotation(1);
+
+  tft.fillScreen(TFT_BLACK);
+  tft.setTextColor(TFT_CYAN);
+  tft.setTextSize(2);
+  tft.setCursor(40, 100);
+  tft.println("Booting...");
+  delay(1000);
   
   // Initialize GPS (Serial1)
   Serial1.begin(9600, SERIAL_8N1, GPS_RX_PIN, GPS_TX_PIN);
@@ -40,18 +123,6 @@ void setup() {
   delay(500);
   Serial.println("LoRa E220 module initialized on Serial2");
   
-  // Serial.println("Wiring Guide:");
-  // Serial.println("GPS Module:");
-  // Serial.println("  GPS TX -> ESP32 GPIO32");
-  // Serial.println("  GPS RX -> ESP32 GPIO33");
-  // Serial.println("  GPS VCC -> 3.3V");
-  // Serial.println("  GPS GND -> GND");
-  // Serial.println("LoRa E220 Module:");
-  // Serial.println("  E220 TX -> ESP32 GPIO16");
-  // Serial.println("  E220 RX -> ESP32 GPIO17");
-  // Serial.println("  E220 VCC -> 3.3V");
-  // Serial.println("  E220 GND -> GND");
-  // Serial.println();
   Serial.println("Starting main loop...");
   Serial.println("=====================================");
 }
@@ -103,6 +174,7 @@ void readGPSData() {
         Serial.print(" | Accuracy: ");
         Serial.print(gps.hdop.hdop(), 1);
         Serial.println(" HDOP");
+        updateDisplay();
       } else {
         gpsFixed = false;
       }
@@ -161,6 +233,8 @@ void parseLocationMessage(String message) {
     int remoteSatellites = data.substring(secondComma + 1, thirdComma).toInt();
     float remoteHDOP = data.substring(thirdComma + 1).toFloat();
     
+    
+    // Log parsed data
     Serial.println("📍 Remote Location:");
     Serial.print("   Lat: ");
     Serial.print(remoteLatitude, 6);
@@ -177,6 +251,11 @@ void parseLocationMessage(String message) {
       Serial.print("📏 Distance: ");
       Serial.print(distance, 2);
       Serial.println(" km");
+      remoteLatStr = String(remoteLatitude, 4);
+      remoteLonStr = String(remoteLongitude, 4);
+      remoteDistance = distance;
+      remoteDataReceived = true;
+    updateDisplay();
     }
     Serial.println();
   }

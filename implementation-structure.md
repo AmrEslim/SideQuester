@@ -20,7 +20,7 @@
 
 #### Tasks:
 
-- [ ] **Install GPS module (NEO-6M)**
+- [x] **Install GPS module (NEO-8M)**
 
   - Connect GPS RX to ESP32 pin 32
   - Connect GPS TX to ESP32 pin 33
