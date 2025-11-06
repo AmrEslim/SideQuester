@@ -6,7 +6,7 @@
 #define CENTER_X 120
 #define CENTER_Y 120
 #define COMPASS_RADIUS 100
-#define NEEDLE_LENGTH 80
+#define NEEDLE_LENGTH 40
 
 // Colors
 #define COLOR_BG 0x0000         // Black background
@@ -95,7 +95,7 @@ void drawCompassBase() {
   tft.drawCircle(CENTER_X, CENTER_Y, COMPASS_RADIUS - 1, COLOR_CIRCLE);
   
   // Draw inner circle
-  tft.drawCircle(CENTER_X, CENTER_Y, COMPASS_RADIUS - 10, COLOR_CIRCLE);
+  tft.drawCircle(CENTER_X, CENTER_Y, COMPASS_RADIUS - 2, COLOR_CIRCLE);
   
   // Draw cardinal direction markers and labels
   drawCardinalMarkers();
@@ -106,66 +106,43 @@ void drawCompassBase() {
 
 // Draw cardinal direction markers (N, S, E, W)
 void drawCardinalMarkers() {
-  tft.setTextDatum(MC_DATUM);
+  // tft.setTextDatum(MC_DATUM);
   tft.setTextSize(2);
-  
-  // North (0°)
   tft.setTextColor(COLOR_CARDINAL, COLOR_BACKGROUND);
-  tft.drawString("N", CENTER_X, CENTER_Y - COMPASS_RADIUS + 15);
-  drawTick(0, 15, COLOR_CARDINAL);
-  
+  tft.drawString("N", CENTER_X, CENTER_Y - COMPASS_RADIUS - 5);
+
   // East (90°)
   tft.setTextColor(COLOR_TEXT, COLOR_BACKGROUND);
-  tft.drawString("E", CENTER_X + COMPASS_RADIUS - 15, CENTER_Y);
-  drawTick(90, 15, COLOR_TEXT);
+  tft.drawString("E", CENTER_X + COMPASS_RADIUS + 5, CENTER_Y);
   
   // South (180°)
-  tft.drawString("S", CENTER_X, CENTER_Y + COMPASS_RADIUS - 15);
-  drawTick(180, 15, COLOR_TEXT);
+  tft.drawString("S", CENTER_X, CENTER_Y + COMPASS_RADIUS + 5);
   
   // West (270°)
-  tft.drawString("W", CENTER_X - COMPASS_RADIUS + 15, CENTER_Y);
-  drawTick(270, 15, COLOR_TEXT);
-  
-  // Draw intermediate ticks
-  tft.setTextSize(1);
-  for (int angle = 0; angle < 360; angle += 30) {
-    if (angle % 90 != 0) { // Skip cardinal directions
-      drawTick(angle, 8, COLOR_CIRCLE);
-    }
-  }
+  tft.drawString("W", CENTER_X - COMPASS_RADIUS - 5, CENTER_Y);
 }
 
-// Draw a tick mark at specified angle
-void drawTick(float angle, int length, uint16_t color) {
-  float rad = (angle - 90) * PI / 180.0;
-  int x1 = CENTER_X + (COMPASS_RADIUS - length) * cos(rad);
-  int y1 = CENTER_Y + (COMPASS_RADIUS - length) * sin(rad);
-  int x2 = CENTER_X + COMPASS_RADIUS * cos(rad);
-  int y2 = CENTER_Y + COMPASS_RADIUS * sin(rad);
-  tft.drawLine(x1, y1, x2, y2, color);
-}
 
-// Update compass display with new heading
-void updateCompassDisplay() {
-  static float lastDisplayHeading = -1;
+// // Update compass display with new heading
+// void updateCompassDisplay() {
+//   static float lastDisplayHeading = -1;
   
-  // Only update if heading changed significantly (reduces flicker)
-  if (abs(compass.smoothedHeading - lastDisplayHeading) < 0.5) {
-    return;
-  }
+//   // Only update if heading changed significantly (reduces flicker)
+//   if (abs(compass.smoothedHeading - lastDisplayHeading) < 0.5) {
+//     return;
+//   }
   
-  // Redraw the rotating compass rose
-  drawRotatingCompass(compass.smoothedHeading);
+//   // Redraw the rotating compass rose
+//   drawRotatingCompass(compass.smoothedHeading);
   
-  // Draw static needle pointing up
-  drawStaticNeedle();
+//   // Draw static needle pointing up
+//   drawStaticNeedle();
   
-  // Update heading text
-  displayHeadingText();
+//   // Update heading text
+//   displayHeadingText();
   
-  lastDisplayHeading = compass.smoothedHeading;
-}
+//   lastDisplayHeading = compass.smoothedHeading;
+// }
 
 
 // Draw static needle pointing up (showing our heading direction)
@@ -182,24 +159,20 @@ void drawStaticNeedle() {
   // Draw needle tip (make it stand out)
   tft.fillCircle(needleX, needleY, 4, COLOR_NEEDLE_TIP);
   tft.drawCircle(needleX, needleY, 4, COLOR_NEEDLE);
-  
-  // Draw opposite end of needle (shorter) - pointing down
-  int backX = CENTER_X;
-  int backY = CENTER_Y + (NEEDLE_LENGTH / 3);
-  tft.drawLine(CENTER_X, CENTER_Y, backX, backY, COLOR_NEEDLE);
+
 }
 
 // Draw rotating compass rose based on heading
 void drawRotatingCompass(float heading) {
-  // Clear the compass area (but not the text area at bottom)
-  tft.fillCircle(CENTER_X, CENTER_Y, COMPASS_RADIUS + 2, COLOR_BACKGROUND);
+  // Clear the compass area (but not the text area at bottom) 
+  tft.fillCircle(CENTER_X, CENTER_Y, COMPASS_RADIUS + 20, COLOR_BACKGROUND);
+
+  // // Draw outer circle
+  // tft.drawCircle(CENTER_X, CENTER_Y, COMPASS_RADIUS, COLOR_CIRCLE);
+  // tft.drawCircle(CENTER_X, CENTER_Y, COMPASS_RADIUS - 1, COLOR_CIRCLE);
   
-  // Draw outer circle
-  tft.drawCircle(CENTER_X, CENTER_Y, COMPASS_RADIUS, COLOR_CIRCLE);
-  tft.drawCircle(CENTER_X, CENTER_Y, COMPASS_RADIUS - 1, COLOR_CIRCLE);
-  
-  // Draw inner circle
-  tft.drawCircle(CENTER_X, CENTER_Y, COMPASS_RADIUS - 10, COLOR_CIRCLE);
+  // // Draw inner circle
+  // tft.drawCircle(CENTER_X, CENTER_Y, COMPASS_RADIUS - 10, COLOR_CIRCLE);
   
   // Draw rotated cardinal direction markers and labels
   drawRotatedCardinalMarkers(heading);
@@ -216,52 +189,156 @@ void drawRotatedCardinalMarkers(float heading) {
   // The compass rose rotates opposite to our heading
   // If we're facing 90° (East), North should be rotated 90° counter-clockwise (to the left)
   float rotation = -heading;
-  
   // North (0°) - Red
   float northAngle = rotation;
-  drawRotatedLabel("N", northAngle, COLOR_CARDINAL);
-  drawRotatedTick(northAngle, 15, COLOR_CARDINAL);
-  
+  drawRotatedLabel("N", northAngle, COLOR_CARDINAL);  
   // East (90°)
   float eastAngle = rotation + 90;
   drawRotatedLabel("E", eastAngle, COLOR_TEXT);
-  drawRotatedTick(eastAngle, 15, COLOR_TEXT);
-  
   // South (180°)
   float southAngle = rotation + 180;
   drawRotatedLabel("S", southAngle, COLOR_TEXT);
-  drawRotatedTick(southAngle, 15, COLOR_TEXT);
-  
   // West (270°)
   float westAngle = rotation + 270;
   drawRotatedLabel("W", westAngle, COLOR_TEXT);
-  drawRotatedTick(westAngle, 15, COLOR_TEXT);
-  
-  // Draw intermediate ticks
-  tft.setTextSize(1);
-  for (int angle = 0; angle < 360; angle += 30) {
-    if (angle % 90 != 0) { // Skip cardinal directions
-      drawRotatedTick(rotation + angle, 8, COLOR_CIRCLE);
-    }
-  }
 }
 
 // Draw a label at a rotated position
 void drawRotatedLabel(const char* label, float angle, uint16_t color) {
   float rad = (angle - 90) * PI / 180.0;
-  int labelX = CENTER_X + (COMPASS_RADIUS - 15) * cos(rad);
-  int labelY = CENTER_Y + (COMPASS_RADIUS - 15) * sin(rad);
-  
+  int labelX = CENTER_X + (COMPASS_RADIUS + 7) * cos(rad);
+  int labelY = CENTER_Y + (COMPASS_RADIUS + 7) * sin(rad);
+
   tft.setTextColor(color, COLOR_BACKGROUND);
   tft.drawString(label, labelX, labelY);
 }
 
-// Draw a tick mark at rotated angle
-void drawRotatedTick(float angle, int length, uint16_t color) {
-  float rad = (angle - 90) * PI / 180.0;
-  int x1 = CENTER_X + (COMPASS_RADIUS - length) * cos(rad);
-  int y1 = CENTER_Y + (COMPASS_RADIUS - length) * sin(rad);
-  int x2 = CENTER_X + COMPASS_RADIUS * cos(rad);
-  int y2 = CENTER_Y + COMPASS_RADIUS * sin(rad);
-  tft.drawLine(x1, y1, x2, y2, color);
+// // Draw a tick mark at rotated angle
+// void drawRotatedTick(float angle, int length, uint16_t color) {
+//   float rad = (angle - 90) * PI / 180.0;
+//   int x1 = CENTER_X + (COMPASS_RADIUS - length) * cos(rad);
+//   int y1 = CENTER_Y + (COMPASS_RADIUS - length) * sin(rad);
+//   int x2 = CENTER_X + COMPASS_RADIUS * cos(rad);
+//   int y2 = CENTER_Y + COMPASS_RADIUS * sin(rad);
+//   tft.drawLine(x1, y1, x2, y2, color);
+// }
+
+void displayDistance(float distanceMeters) {
+  tft.fillRect(65, 160, 100, 30, COLOR_BACKGROUND); // Clear previous text
+  tft.setTextSize(2);
+  tft.setTextColor(COLOR_TEXT, COLOR_BACKGROUND);
+  
+  String distanceStr;
+  if (distanceMeters >= 1000) {
+    distanceStr = String(distanceMeters / 1000.0, 2) + " km";
+  } else {
+    distanceStr = String(distanceMeters, 1) + " m";
+  }
+
+  tft.drawString(distanceStr, 120, 190);
+}
+
+// Draw a glowing remote device marker on the compass
+// bearing: angle to the remote device (0-360 degrees)
+// heading: current compass heading for rotation
+void drawRemoteDevice(float bearing, float heading) {
+  // Calculate the angle relative to the compass rose rotation
+  float relativeAngle = bearing - heading;
+  
+  // Convert to radians (subtract 90 to start from top)
+  float rad = (relativeAngle - 90) * PI / 180.0;
+  
+  // Position on the compass (slightly inside the edge)
+  int markerRadius = COMPASS_RADIUS - 25;
+  int markerX = CENTER_X + markerRadius * cos(rad);
+  int markerY = CENTER_Y + markerRadius * sin(rad);
+  
+  // Draw glowing effect - multiple circles with decreasing opacity
+  // Outer glow (largest, most transparent)
+  tft.drawCircle(markerX, markerY, 12, 0x01EF); // Very dim cyan
+  tft.drawCircle(markerX, markerY, 11, 0x03FF); // Dim cyan
+  tft.drawCircle(markerX, markerY, 10, 0x05FF); // Medium cyan
+  
+  // Middle glow
+  tft.fillCircle(markerX, markerY, 8, 0x07FF); // Bright cyan
+  tft.fillCircle(markerX, markerY, 6, 0x07FF); // Bright cyan
+  
+  // Core - brightest part
+  tft.fillCircle(markerX, markerY, 4, 0xFFFF); // White core
+  
+  // Draw directional arrow pointing to device
+  // Calculate arrow tip position (extends from marker towards edge)
+  int arrowLength = 15;
+  int arrowTipX = CENTER_X + (markerRadius + arrowLength) * cos(rad);
+  int arrowTipY = CENTER_Y + (markerRadius + arrowLength) * sin(rad);
+  
+  // Draw main arrow line (glowing cyan)
+  tft.drawLine(markerX, markerY, arrowTipX, arrowTipY, 0x07FF);
+  tft.drawLine(markerX + 1, markerY, arrowTipX + 1, arrowTipY, 0x07FF);
+  
+  // Draw arrowhead
+  float arrowAngle = atan2(arrowTipY - markerY, arrowTipX - markerX);
+  int arrowSize = 6;
+  
+  // Left wing of arrowhead
+  int leftX = arrowTipX - arrowSize * cos(arrowAngle - 0.4);
+  int leftY = arrowTipY - arrowSize * sin(arrowAngle - 0.4);
+  tft.drawLine(arrowTipX, arrowTipY, leftX, leftY, 0x07FF);
+  tft.drawLine(arrowTipX, arrowTipY + 1, leftX, leftY + 1, 0x07FF);
+  
+  // Right wing of arrowhead
+  int rightX = arrowTipX - arrowSize * cos(arrowAngle + 0.4);
+  int rightY = arrowTipY - arrowSize * sin(arrowAngle + 0.4);
+  tft.drawLine(arrowTipX, arrowTipY, rightX, rightY, 0x07FF);
+  tft.drawLine(arrowTipX, arrowTipY + 1, rightX, rightY + 1, 0x07FF);
+  
+  // Optional: Add pulsing effect border
+  tft.drawCircle(markerX, markerY, 9, 0x07FF);
+}
+
+// Alternative version with animated pulse effect
+// Call this in a loop with incrementing pulsePhase (0-10)
+void drawRemoteDeviceAnimated(float bearing, float heading, int pulsePhase) {
+  // Calculate the angle relative to the compass rose rotation
+  float relativeAngle = bearing - heading;
+  
+  // Convert to radians (subtract 90 to start from top)
+  float rad = (relativeAngle - 90) * PI / 180.0;
+  
+  // Position on the compass
+  int markerRadius = COMPASS_RADIUS - 25;
+  int markerX = CENTER_X + markerRadius * cos(rad);
+  int markerY = CENTER_Y + markerRadius * sin(rad);
+  
+  // Pulsing outer glow based on phase
+  int pulseRadius = 10 + (pulsePhase % 5);
+  tft.drawCircle(markerX, markerY, pulseRadius, 0x03FF);
+  tft.drawCircle(markerX, markerY, pulseRadius - 1, 0x05FF);
+  
+  // Static middle glow
+  tft.fillCircle(markerX, markerY, 8, 0x07FF);
+  tft.fillCircle(markerX, markerY, 6, 0x07FF);
+  
+  // Core - white center
+  tft.fillCircle(markerX, markerY, 4, 0xFFFF);
+  
+  // Draw directional arrow
+  int arrowLength = 15;
+  int arrowTipX = CENTER_X + (markerRadius + arrowLength) * cos(rad);
+  int arrowTipY = CENTER_Y + (markerRadius + arrowLength) * sin(rad);
+  
+  tft.drawLine(markerX, markerY, arrowTipX, arrowTipY, 0x07FF);
+  tft.drawLine(markerX + 1, markerY, arrowTipX + 1, arrowTipY, 0x07FF);
+  
+  // Arrowhead
+  float arrowAngle = atan2(arrowTipY - markerY, arrowTipX - markerX);
+  int arrowSize = 6;
+  
+  int leftX = arrowTipX - arrowSize * cos(arrowAngle - 0.4);
+  int leftY = arrowTipY - arrowSize * sin(arrowAngle - 0.4);
+  tft.drawLine(arrowTipX, arrowTipY, leftX, leftY, 0x07FF);
+  
+  int rightX = arrowTipX - arrowSize * cos(arrowAngle + 0.4);
+  int rightY = arrowTipY - arrowSize * sin(arrowAngle + 0.4);
+  tft.drawLine(arrowTipX, arrowTipY, rightX, rightY, 0x07FF);
 }

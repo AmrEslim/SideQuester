@@ -4,14 +4,16 @@
 
 // Objects
 HardwareSerial E220(2); // Use UART2 for LoRa
+RemoteLocationData result;
 
 // Timing variables
 unsigned long lastLoRaTransmit = 0;
 const unsigned long LORA_TRANSMIT_INTERVAL = 5000; // Transmit every 5 seconds
 
+
+
 RemoteLocationData parseLocationMessage(String message)
 {
-    RemoteLocationData result;
     result.isValid = false;
 
     // Remove "LOC:" prefix
@@ -74,35 +76,6 @@ void checkIncomingMessages()
     }
 }
 
-// void parseLocationMessage(String message)
-// {
-//     // Remove "LOC:" prefix
-//     String data = message.substring(4);
-
-//     // Parse comma-separated values
-//     int firstComma = data.indexOf(',');
-//     int secondComma = data.indexOf(',', firstComma + 1);
-//     int thirdComma = data.indexOf(',', secondComma + 1);
-
-//     if (firstComma > 0 && secondComma > 0 && thirdComma > 0)
-//     {
-//         float remoteLatitude = data.substring(0, firstComma).toFloat();
-//         float remoteLongitude = data.substring(firstComma + 1, secondComma).toFloat();
-//         int remoteSatellites = data.substring(secondComma + 1, thirdComma).toInt();
-//         float remoteHDOP = data.substring(thirdComma + 1).toFloat();
-
-//         // Calculate distance if we have our own GPS fix
-//         // if (gpsFixed)
-//         // {
-//         //     double distance = calculateDistance(latitude, longitude, remoteLatitude, remoteLongitude);
-//         //     remoteLatStr = String(remoteLatitude, 4);
-//         //     remoteLonStr = String(remoteLongitude, 4);
-//         //     remoteDistance = distance;
-//         //     remoteDataReceived = true;
-//         // }
-//     }
-// }
-
 double calculateDistance(double lat1, double lon1, double lat2, double lon2)
 {
     // Haversine formula to calculate distance between two points on Earth
@@ -120,4 +93,26 @@ double calculateDistance(double lat1, double lon1, double lat2, double lon2)
     double c = 2 * atan2(sqrt(a), sqrt(1 - a));
 
     return R * c;
+}
+
+double calculateBearing(double lat1, double lon1, double lat2, double lon2)
+{
+    // Calculate bearing from point 1 to point 2
+    double lat1Rad = lat1 * PI / 180.0;
+    double lon1Rad = lon1 * PI / 180.0;
+    double lat2Rad = lat2 * PI / 180.0;
+    double lon2Rad = lon2 * PI / 180.0;
+
+    double dLon = lon2Rad - lon1Rad;
+
+    double y = sin(dLon) * cos(lat2Rad);
+    double x = cos(lat1Rad) * sin(lat2Rad) - sin(lat1Rad) * cos(lat2Rad) * cos(dLon);
+    
+    double bearingRad = atan2(y, x);
+    double bearingDeg = bearingRad * 180.0 / PI;
+    
+    // Normalize to 0-360 degrees
+    bearingDeg = fmod((bearingDeg + 360.0), 360.0);
+    
+    return bearingDeg;
 }

@@ -16,68 +16,72 @@
 String remoteLatStr = "N/A";
 String remoteLonStr = "N/A";
 float remoteDistance = 0.0;
+float remoteBearing = 0.0; 
 bool remoteDataReceived = false;
 
 //display update function
-void updateDisplay() {
-  tft.fillScreen(TFT_BLACK);
-  tft.setTextColor(TFT_WHITE);
-  tft.setTextSize(1);
+
+// void updateDisplay() {
+//   tft.fillScreen(TFT_BLACK);
+//   tft.setTextColor(TFT_WHITE);
+//   tft.setTextSize(1);
   
-  // Title
-  tft.setCursor(70, 10);
-  tft.setTextSize(2);
-  tft.setTextColor(TFT_CYAN);
-  tft.println("SideQuester");
+//   // Title
+//   tft.setCursor(70, 10);
+//   tft.setTextSize(2);
+//   tft.setTextColor(TFT_CYAN);
+//   tft.println("SideQuester");
   
-  // Local GPS Status
-  tft.setTextSize(1);
-  tft.setTextColor(TFT_GREEN);
-  tft.setCursor(10, 40);
-  tft.println("Local GPS:");
+//   // Local GPS Status
+//   tft.setTextSize(1);
+//   tft.setTextColor(TFT_GREEN);
+//   tft.setCursor(10, 40);
+//   tft.println("Local GPS:");
   
-  tft.setTextColor(TFT_WHITE);
-  tft.setCursor(10, 55);
-  if (gpsFixed) {
-    tft.print("Lat: ");
-    tft.println(latitude, 4);
-    tft.setCursor(10, 70);
-    tft.print("Lon: ");
-    tft.println(longitude, 4);
-    tft.setCursor(10, 85);
-    tft.print("Sats: ");
-    tft.print(gps.satellites.value());
-  } else {
-    tft.setTextColor(TFT_RED);
-    tft.println("No Fix");
-  }
+//   tft.setTextColor(TFT_WHITE);
+//   tft.setCursor(10, 55);
+//   if (gpsFixed) {
+//     tft.print("Lat: ");
+//     tft.println(latitude, 4);
+//     tft.setCursor(10, 70);
+//     tft.print("Lon: ");
+//     tft.println(longitude, 4);
+//     tft.setCursor(10, 85);
+//     tft.print("Sats: ");
+//     tft.print(gps.satellites.value());
+//   } else {
+//     tft.setTextColor(TFT_RED);
+//     tft.println("No Fix");
+//   }
   
-  // Remote Device Status
-  tft.setTextColor(TFT_YELLOW);
-  tft.setCursor(10, 110);
-  tft.println("Remote Device:");
+//   // Remote Device Status
+//   tft.setTextColor(TFT_YELLOW);
+//   tft.setCursor(10, 110);
+//   tft.println("Remote Device:");
   
-  tft.setTextColor(TFT_WHITE);
-  if (remoteDataReceived) {
-    tft.setCursor(10, 125);
-    tft.print("Lat: ");
-    tft.println(remoteLatStr);
-    tft.setCursor(10, 140);
-    tft.print("Lon: ");
-    tft.println(remoteLonStr);
-    tft.setCursor(10, 155);
-    tft.print("Distance: ");
-    tft.print(remoteDistance, 2);
-    tft.println(" km");
-  } else {
-    tft.setCursor(10, 125);
-    tft.setTextColor(TFT_ORANGE);
-    tft.println("Waiting...");
-  }
+//   tft.setTextColor(TFT_WHITE);
+//   if (remoteDataReceived) {
+//     tft.setCursor(10, 125);
+//     tft.print("Lat: ");
+//     tft.println(remoteLatStr);
+//     tft.setCursor(10, 140);
+//     tft.print("Lon: ");
+//     tft.println(remoteLonStr);
+//     tft.setCursor(10, 155);
+//     tft.print("Distance: ");
+//     tft.print(remoteDistance, 2);
+//     tft.println(" km");
+//   } else {
+//     tft.setCursor(10, 125);
+//     tft.setTextColor(TFT_ORANGE);
+//     tft.println("Waiting...");
+//   }
   
-  // Status indicator
-  tft.fillCircle(120, 220, 8, gpsFixed ? TFT_GREEN : TFT_RED);
-}
+//   // Status indicator
+//   tft.fillCircle(120, 220, 8, gpsFixed ? TFT_GREEN : TFT_RED);
+// }
+
+
 void setup() {
   Serial.begin(115200);
   delay(1000);
@@ -97,10 +101,23 @@ void setup() {
   E220.begin(9600, SERIAL_8N1, LORA_RX, LORA_TX);
   delay(500);
   Serial.println("LoRa E220 module initialized on Serial2");
-  
+
+  // Initialize Compass Sensor
+  Wire.begin();
+  if (checkSensor()) {
+      if (initSensor()) {
+          Serial.println("Compass sensor initialized successfully.");
+      } else {
+          Serial.println("Failed to initialize compass sensor.");
+      }
+  } else {
+      Serial.println("Compass sensor not found.");
+  }
+
   // Show boot screen
   drawBootScreen();
   delay(2000);
+  tft.fillScreen(COLOR_BG);
   
   Serial.println("Starting main loop...");
   Serial.println("=====================================");
@@ -143,7 +160,33 @@ void loop() {
   
   // Check for incoming LoRa messages
   checkIncomingMessages();
-  
+
+  if (result.isValid){
+    // Update remote location data
+    remoteLatStr = String(result.latitude, 4);
+    remoteLonStr = String(result.longitude, 4);
+    remoteDataReceived = true;
+    // Calculate distance to remote location
+    remoteDistance = calculateDistance(latitude, longitude, result.latitude, result.longitude);
+    // Calculate bearing to remote location
+    remoteBearing = calculateBearing(latitude, longitude, result.latitude, result.longitude);
+  }
+  if (readCompass()){
+    calculateHeading();
+    smoothHeading();
+    String direction = getDirection();
+    // Redraw the rotating compass rose
+    // drawRotatedCardinalMarkers(compass.smoothedHeading);
+    drawRotatingCompass(compass.smoothedHeading);
+    drawRemoteDevice(remoteBearing, compass.smoothedHeading);
+  }
+
+  // tft.fillScreen(COLOR_BG);
+  // drawCompassBase();
+  drawStaticNeedle();
+  // drawCardinalMarkers();
+  displayDistance(remoteDistance);
+  // drawRotatingCompass();
   // Small delay to prevent excessive CPU usage
   delay(100);
 }

@@ -25,6 +25,9 @@ void drawRotatingCompass(float heading);
 void drawRotatedCardinalMarkers(float heading);
 void drawRotatedLabel(const char* label, float angle, uint16_t color);
 void drawRotatedTick(float angle, int length, uint16_t color);
+void displayDistance(float distanceMeters);
+void drawRemoteDevice(float bearing, float heading);
+void drawRemoteDeviceAnimated(float bearing, float heading, int pulsePhase);
 
 
 #endif // BOOT_SCREEN_H

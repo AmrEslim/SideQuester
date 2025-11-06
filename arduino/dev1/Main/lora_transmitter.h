@@ -18,12 +18,13 @@ struct RemoteLocationData
     float hdop;
 };
 
-extern RemoteLocationData remoteLocation;
+extern RemoteLocationData result;
 
 // Function declarations
 void transmitLocationData();
 void checkIncomingMessages();
 double calculateDistance(double lat1, double lon1, double lat2, double lon2);
+double calculateBearing(double lat1, double lon1, double lat2, double lon2);
 RemoteLocationData parseLocationMessage(String message);
 
 #endif // LORA_TRANSMITTER_H

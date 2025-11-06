@@ -28,11 +28,20 @@
 float lastHeading = 0;
 const float SMOOTHING_FACTOR = 0.15; // Lower = smoother but slower response
 
+// Forward declarations
+void writeRegister(uint8_t reg, uint8_t value);
+uint8_t readRegister(uint8_t reg);
+
+//objects
+CompassData compass;
+
 // Check if sensor is present on I2C bus
+// Checks if the compass sensor is present on the I2C bus.
+// Returns true if the sensor acknowledges, false otherwise.
 bool checkSensor()
 {
     Wire.beginTransmission(COMPASS_ADDR);
-    byte error = Wire.endTransmission();
+    uint8_t error = Wire.endTransmission();
     return (error == 0);
 }
 
@@ -85,7 +94,7 @@ bool readCompass()
 void calculateHeading()
 {
     float heading = atan2((float)compass.y, (float)compass.x);
-    heading = heading * 180.0 / PI;
+    heading = heading * 180.0 /  M_PI; // Convert to degrees
 
     if (heading < 0)
     {
