@@ -139,7 +139,7 @@ void loop() {
       drawConnectedSign(41, 158);
     }
   }
-
+  
   unsigned long currentTime = millis();
   
   // Read GPS data
@@ -175,18 +175,15 @@ void loop() {
     calculateHeading();
     smoothHeading();
     String direction = getDirection();
-    // Redraw the rotating compass rose
-    // drawRotatedCardinalMarkers(compass.smoothedHeading);
+  }
+  // Update display with current data
+  if (gpsFixed || remoteDataReceived) {
     drawRotatingCompass(compass.smoothedHeading);
     drawRemoteDevice(remoteBearing, compass.smoothedHeading);
+    drawStaticNeedle();
+    displayDistance(remoteDistance);
   }
 
-  // tft.fillScreen(COLOR_BG);
-  // drawCompassBase();
-  drawStaticNeedle();
-  // drawCardinalMarkers();
-  displayDistance(remoteDistance);
-  // drawRotatingCompass();
   // Small delay to prevent excessive CPU usage
   delay(100);
 }
