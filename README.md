@@ -7,20 +7,20 @@ SideQuester is a dual ESP32-based compass system that helps you stay connected w
 ## ✨ Key Features
 
 - 🧭 **Real-time Direction Pointing** - Always points to your friend's location
-- 📡 **Long-Range Communication** - Up to 3km range with LoRa technology  
+- 📡 **Long-Range Communication** - Up to 3km range with LoRa technology /  "to be tested" 
 - 🛰️ **GPS Tracking** - Precise location sharing using satellite positioning
-- 📱 **OLED Display** - Shows distance, direction, and status
+- 📱 **Round Display** - Shows distance, direction, and status
 - 📶 **No Network Required** - Works completely offline
-- 🔋 **All-Day Battery** - Portable design for extended adventures
+- 🔋 **Battery Powered** - Portable design for extended adventures /  "powered time to be tested" 
 
 ## 🚀 Quick Start
 
 **Hardware Required (per device):**
 - ESP32 development board
 - E22-900M30S / E220-900T30D LoRa module
-- GPS module (NEO-6M/8M/9M)
-- Digital compass (HMC5883L)
-- OLED display (128x64)
+- GPS module (NEO-6M/M8n)
+- Digital compass (QMC5883L)
+- Round display (240x240)
 - Battery pack with charging circuit
 
 **Software:**

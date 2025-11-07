@@ -1,9 +1,13 @@
 
 #include <TinyGPS++.h>
 
-// GPS setup
+// // GPS setup
 #define GPS_TX_PIN 33
 #define GPS_RX_PIN 32
+
+// // GPS setup
+// #define GPS_RX_PIN 32  // ESP32 RX pin (connects to GPS TX)
+// #define GPS_TX_PIN 33  // ESP32 TX pin (connects to GPS RX)
 
 TinyGPSPlus gps;
 unsigned long timestamp;
@@ -15,7 +19,7 @@ void setup() {
   Serial.println("GPS Diagnostic Test Starting...");
   
   // GPS Serial port
-  Serial1.begin(9600, SERIAL_8N1, GPS_TX_PIN, GPS_RX_PIN);
+  Serial1.begin(115200, SERIAL_8N1, GPS_TX_PIN, GPS_RX_PIN);
   
   Serial.println("Wiring Check:");
   Serial.println("GPS TX -> ESP32 GPIO32 (RX)");
