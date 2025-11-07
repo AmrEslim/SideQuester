@@ -37,8 +37,8 @@ SideQuester is a dual ESP32-based compass system that helps you stay connected w
 **Estimated Completion:** Q1 2026
 
 - [x] Project planning and design
-- [ ] Hardware assembly and testing
-- [ ] Software development
+- [x] Hardware assembly and testing
+- [x] Software development
 - [ ] Field testing
 - [ ] Documentation and deployment
 
