@@ -8,7 +8,7 @@ RemoteLocationData result;
 
 // Timing variables
 unsigned long lastLoRaTransmit = 0;
-const unsigned long LORA_TRANSMIT_INTERVAL = 5000; // Transmit every 5 seconds
+const unsigned long LORA_TRANSMIT_INTERVAL = 1000; // Transmit every 1 second
 
 
 

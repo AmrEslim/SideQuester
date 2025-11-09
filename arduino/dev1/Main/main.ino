@@ -12,74 +12,17 @@
 #define LORA_TX 17
 
 
+#define DISPLAY_UPDATE_INTERVAL 500
+unsigned long lastDisplayUpdate = 0;
+bool lastWaitState = false;
+
+
 //received location data 
 String remoteLatStr = "N/A";
 String remoteLonStr = "N/A";
 float remoteDistance = 0.0;
 float remoteBearing = 0.0; 
 bool remoteDataReceived = false;
-
-//display update function
-
-// void updateDisplay() {
-//   tft.fillScreen(TFT_BLACK);
-//   tft.setTextColor(TFT_WHITE);
-//   tft.setTextSize(1);
-  
-//   // Title
-//   tft.setCursor(70, 10);
-//   tft.setTextSize(2);
-//   tft.setTextColor(TFT_CYAN);
-//   tft.println("SideQuester");
-  
-//   // Local GPS Status
-//   tft.setTextSize(1);
-//   tft.setTextColor(TFT_GREEN);
-//   tft.setCursor(10, 40);
-//   tft.println("Local GPS:");
-  
-//   tft.setTextColor(TFT_WHITE);
-//   tft.setCursor(10, 55);
-//   if (gpsFixed) {
-//     tft.print("Lat: ");
-//     tft.println(latitude, 4);
-//     tft.setCursor(10, 70);
-//     tft.print("Lon: ");
-//     tft.println(longitude, 4);
-//     tft.setCursor(10, 85);
-//     tft.print("Sats: ");
-//     tft.print(gps.satellites.value());
-//   } else {
-//     tft.setTextColor(TFT_RED);
-//     tft.println("No Fix");
-//   }
-  
-//   // Remote Device Status
-//   tft.setTextColor(TFT_YELLOW);
-//   tft.setCursor(10, 110);
-//   tft.println("Remote Device:");
-  
-//   tft.setTextColor(TFT_WHITE);
-//   if (remoteDataReceived) {
-//     tft.setCursor(10, 125);
-//     tft.print("Lat: ");
-//     tft.println(remoteLatStr);
-//     tft.setCursor(10, 140);
-//     tft.print("Lon: ");
-//     tft.println(remoteLonStr);
-//     tft.setCursor(10, 155);
-//     tft.print("Distance: ");
-//     tft.print(remoteDistance, 2);
-//     tft.println(" km");
-//   } else {
-//     tft.setCursor(10, 125);
-//     tft.setTextColor(TFT_ORANGE);
-//     tft.println("Waiting...");
-//   }
-  
-//   // Status indicator
-//   tft.fillCircle(120, 220, 8, gpsFixed ? TFT_GREEN : TFT_RED);
-// }
 
 
 void setup() {
@@ -96,7 +39,14 @@ void setup() {
   // Initialize GPS (Serial1)
   Serial1.begin(9600, SERIAL_8N1, GPS_RX_PIN, GPS_TX_PIN);
   Serial.println("GPS module initialized on Serial1");
-  
+
+  if (Serial1.available() > 0) {
+    Serial.println("✓ GPS module is ready");
+  }
+  else {
+    Serial.println("✗ GPS module not responding");
+  }
+
   // Initialize LoRa E220 (Serial2)
   E220.begin(9600, SERIAL_8N1, LORA_RX, LORA_TX);
   delay(500);
@@ -124,28 +74,20 @@ void setup() {
 }
 
 void loop() {
-  if (!gpsFixed || !remoteDataReceived) {
-    drawWaitScreen();
-    if (!gpsFixed && !remoteDataReceived) {
-      drawCrossSign(41, 158);
-      drawCrossSign(170, 158);
-    }
-    else if (!gpsFixed && remoteDataReceived) {
-      drawCrossSign(41, 158);
-      drawConnectedSign(170, 158);
-    }
-    else if (gpsFixed && !remoteDataReceived) {
-      drawCrossSign(170, 158);
-      drawConnectedSign(41, 158);
+  unsigned long currentTime = millis();
+  
+  // ===== GPS DATA READING (Event-driven) =====
+  bool newGPSData = false;
+  while (Serial1.available() > 0) {
+    char c = Serial1.read();
+    if (gps.encode(c)) {
+      newGPSData = true;
     }
   }
   
-  unsigned long currentTime = millis();
-  
-  // Read GPS data
-  if (currentTime - lastGPSRead >= GPS_READ_INTERVAL) {
+  if (newGPSData) {
+    Serial.println("✓ GPS module is transmitting data");
     readGPSData();
-    lastGPSRead = currentTime;
   }
   
   // Transmit location via LoRa if GPS has a fix
@@ -163,28 +105,51 @@ void loop() {
 
   if (result.isValid){
     // Update remote location data
-    remoteLatStr = String(result.latitude, 4);
-    remoteLonStr = String(result.longitude, 4);
+    remoteLatStr = String(result.latitude, 6);
+    remoteLonStr = String(result.longitude, 6);
     remoteDataReceived = true;
-    // Calculate distance to remote location
-    remoteDistance = calculateDistance(latitude, longitude, result.latitude, result.longitude);
-    // Calculate bearing to remote location
-    remoteBearing = calculateBearing(latitude, longitude, result.latitude, result.longitude);
+
+    // Only calculate if we have a valid GPS fix
+    if (gpsFixed) {
+      remoteDistance = calculateDistance(latitude, longitude, result.latitude, result.longitude);
+      remoteBearing = calculateBearing(latitude, longitude, result.latitude, result.longitude);
+    }
   }
   if (readCompass()){
     calculateHeading();
     smoothHeading();
-    String direction = getDirection();
+    // String direction = getDirection();
   }
-  // Update display with current data
-  if (gpsFixed || remoteDataReceived) {
+  // ===== DISPLAY UPDATE =====
+  bool waitingState = !gpsFixed || !remoteDataReceived;
+
+  // Only redraw wait screen when state changes
+  if (waitingState && (waitingState != lastWaitState)) {
+    drawWaitScreen();
+    
+    if (!gpsFixed && !remoteDataReceived) {
+      drawCrossSign(41, 158);
+      drawCrossSign(170, 158);
+    } else if (!gpsFixed) {
+      drawCrossSign(41, 158);
+      drawConnectedSign(170, 158);
+    } else {
+      drawConnectedSign(41, 158);
+      drawCrossSign(170, 158);
+    }
+    lastWaitState = waitingState;
+  }
+
+  // Update compass display at controlled rate
+  if (!waitingState && (currentTime - lastDisplayUpdate >= DISPLAY_UPDATE_INTERVAL)) {
     drawRotatingCompass(compass.smoothedHeading);
     drawRemoteDevice(remoteBearing, compass.smoothedHeading);
     drawStaticNeedle();
     displayDistance(remoteDistance);
+    lastDisplayUpdate = currentTime;
   }
 
   // Small delay to prevent excessive CPU usage
-  delay(100);
+  // delay(50);
 }
  

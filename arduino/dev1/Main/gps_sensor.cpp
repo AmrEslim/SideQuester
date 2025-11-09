@@ -11,26 +11,20 @@ bool gpsFixed = false;
 
 // Timing variables
 unsigned long lastGPSRead = 0;
-const unsigned long GPS_READ_INTERVAL = 500; // Read GPS every 0.5 seconds
+const unsigned long GPS_READ_INTERVAL = 1000; // Read GPS every 1 second
 
 void readGPSData()
 {
-    // Process GPS data
-    while (Serial1.available() > 0)
-    {
-        char c = Serial1.read();
-        if (gps.encode(c))
-        {
-            if (gps.location.isValid())
-            {
-                latitude = gps.location.lat();
-                longitude = gps.location.lng();
-                gpsFixed = true;
-            }
-            else
-            {
-                gpsFixed = false;
-            }
-        }
+    Serial.print("Satellites in view: ");
+    Serial.println(gps.satellites.value());
+    if (gps.location.isValid()){
+        latitude = gps.location.lat();
+        longitude = gps.location.lng();
+        gpsFixed = true;
+        Serial.print("gpsFixed");
+    }
+    else{
+        gpsFixed = false;
+        Serial.print("gps not fixed");
     }
 }
