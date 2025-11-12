@@ -108,13 +108,14 @@ void loop() {
     remoteLatStr = String(result.latitude, 6);
     remoteLonStr = String(result.longitude, 6);
     remoteDataReceived = true;
-
-    // Only calculate if we have a valid GPS fix
-    if (gpsFixed) {
-      remoteDistance = calculateDistance(latitude, longitude, result.latitude, result.longitude);
-      remoteBearing = calculateBearing(latitude, longitude, result.latitude, result.longitude);
-    }
   }
+    // CONTINUOUSLY recalculate distance/bearing when BOTH positions are valid
+  if (gpsFixed && remoteDataReceived) {
+    remoteDistance = calculateDistance(latitude, longitude, result.latitude, result.longitude);
+    remoteBearing = calculateBearing(latitude, longitude, result.latitude, result.longitude);
+  }
+
+  // ===== COMPASS DATA READING =====
   if (readCompass()){
     calculateHeading();
     smoothHeading();
@@ -150,6 +151,6 @@ void loop() {
   }
 
   // Small delay to prevent excessive CPU usage
-  // delay(50);
+  delay(50);
 }
  

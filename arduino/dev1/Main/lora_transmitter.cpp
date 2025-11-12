@@ -79,7 +79,8 @@ void checkIncomingMessages()
 double calculateDistance(double lat1, double lon1, double lat2, double lon2)
 {
     // Haversine formula to calculate distance between two points on Earth
-    const double R = 6371.0; // Earth's radius in kilometers
+    // const double R = 6371.0; // Earth's radius in kilometers
+    const double R = 6371000.0; // Earth's radius in METERS (was 6371.0 km)
 
     double lat1Rad = lat1 * PI / 180.0;
     double lon1Rad = lon1 * PI / 180.0;
