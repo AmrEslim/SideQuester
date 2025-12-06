@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive SideQuester compass demo - Experience the real algorithms in your browser">
+    <title>SideQuester - Interactive Demo</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="demo-page">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <div class="logo">
+                <a href="index.html">
+                    <span class="logo-icon">🧭</span>
+                    <span class="logo-text">SideQuester</span>
+                </a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#features">Features</a></li>
+                <li><a href="https://github.com/AmrEslim/SideQuester" target="_blank">GitHub</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Demo Content -->
+    <section class="demo-container">
+        <div class="container">
+            <h1 class="demo-title">Interactive Compass Demo</h1>
+            <p class="demo-subtitle">Experience the same algorithms running on SideQuester hardware</p>
+
+            <div class="demo-layout">
+                <!-- Main Compass Display -->
+                <div class="demo-main">
+                    <div class="compass-display">
+                        <canvas id="compassCanvas" width="400" height="400"></canvas>
+                        <div class="compass-info">
+                            <div class="info-item">
+                                <span class="info-label">Heading:</span>
+                                <span class="info-value" id="heading">0°</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Direction:</span>
+                                <span class="info-value" id="direction">N</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Distance:</span>
+                                <span class="info-value" id="distance">0 m</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Bearing:</span>
+                                <span class="info-value" id="bearing">0°</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controls Sidebar -->
+                <div class="demo-controls">
+                    <div class="control-section">
+                        <h3>🎮 Controls</h3>
+                        <p class="control-hint">Simulate compass and GPS data</p>
+                        
+                        <div class="control-group">
+                            <label for="currentHeading">Your Heading (0-360°)</label>
+                            <input type="range" id="currentHeading" min="0" max="360" value="0" step="1">
+                            <span class="range-value" id="headingValue">0°</span>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label for="smoothing">Smoothing Factor</label>
+                            <input type="range" id="smoothing" min="0" max="100" value="8" step="1">
+                            <span class="range-value" id="smoothingValue">0.08</span>
+                        </div>
+                        
+                        <button id="resetBtn" class="btn btn-small">Reset Compass</button>
+                    </div>
+
+                    <div class="control-section">
+                        <h3>📍 GPS Positions</h3>
+                        
+                        <div class="gps-group">
+                            <h4>Your Location</h4>
+                            <div class="input-row">
+                                <input type="number" id="yourLat" placeholder="Latitude" value="30.0444" step="0.0001">
+                                <input type="number" id="yourLon" placeholder="Longitude" value="31.2357" step="0.0001">
+                            </div>
+                        </div>
+                        
+                        <div class="gps-group">
+                            <h4>Friend's Location</h4>
+                            <div class="input-row">
+                                <input type="number" id="friendLat" placeholder="Latitude" value="30.0500" step="0.0001">
+                                <input type="number" id="friendLon" placeholder="Longitude" value="31.2400" step="0.0001">
+                            </div>
+                        </div>
+                        
+                        <button id="calculateBtn" class="btn btn-primary btn-small">Calculate</button>
+                        
+                        <div class="preset-buttons">
+                            <button class="btn-preset" data-preset="nearby">Nearby (500m)</button>
+                            <button class="btn-preset" data-preset="festival">Festival (2km)</button>
+                            <button class="btn-preset" data-preset="far">Far Away (10km)</button>
+                        </div>
+                    </div>
+
+                    <div class="control-section">
+                        <h3>ℹ️ Algorithm Info</h3>
+                        <div class="algorithm-info">
+                            <p><strong>Heading:</strong> atan2(y, x) × 180/π</p>
+                            <p><strong>Distance:</strong> Haversine formula</p>
+                            <p><strong>Bearing:</strong> Initial bearing calculation</p>
+                            <p><strong>Smoothing:</strong> Exponential moving average</p>
+                        </div>
+                        <p class="wasm-badge">⚡ Powered by Rust + WebAssembly</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features Note -->
+            <div class="demo-features-note">
+                <h3>What You're Seeing</h3>
+                <div class="features-row">
+                    <div class="feature-note">
+                        <strong>✓ Real Algorithms</strong>
+                        <p>Same code running on ESP32 hardware</p>
+                    </div>
+                    <div class="feature-note">
+                        <strong>✓ Live Calculations</strong>
+                        <p>Distance, bearing, and heading in real-time</p>
+                    </div>
+                    <div class="feature-note">
+                        <strong>✓ Smoothing Filter</strong>
+                        <p>Exponential smoothing with dead zone</p>
+                    </div>
+                    <div class="feature-note">
+                        <strong>✓ WebAssembly</strong>
+                        <p>Rust compiled to WASM for performance</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- How It Works -->
+            <div class="demo-explanation">
+                <h3>How This Demo Works</h3>
+                <ol>
+                    <li><strong>Adjust Your Heading:</strong> Use the slider to simulate rotating your device (like a compass needle)</li>
+                    <li><strong>Set GPS Positions:</strong> Enter coordinates for you and your friend, or use presets</li>
+                    <li><strong>Calculate:</strong> The demo calculates distance and bearing between the two positions</li>
+                    <li><strong>Watch the Compass:</strong> The red arrow shows the direction to your friend relative to your heading</li>
+                </ol>
+                <p class="note">On actual hardware, GPS provides real coordinates and the magnetometer provides heading automatically!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Loading Indicator -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <p>Loading WebAssembly module...</p>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="app.js"></script>
+</body>
+</html>
