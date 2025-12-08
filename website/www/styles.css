@@ -898,37 +898,517 @@ body {
     to { transform: rotate(360deg); }
 }
 
+/* ===== Mobile Navigation Toggle ===== */
+.mobile-menu-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 24px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 1001;
+}
+
+.mobile-menu-toggle span {
+    display: block;
+    width: 100%;
+    height: 3px;
+    background: var(--text-light);
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+.mobile-menu-toggle.active span:nth-child(1) {
+    transform: rotate(45deg) translate(6px, 6px);
+}
+
+.mobile-menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.mobile-menu-toggle.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(6px, -6px);
+}
+
 /* ===== Responsive Design ===== */
-@media (max-width: 768px) {
+
+/* Large tablets and small desktops */
+@media (max-width: 1024px) {
     .hero .container {
-        grid-template-columns: 1fr;
-        text-align: center;
+        gap: 2rem;
     }
     
     .hero-title {
-        font-size: 2.5rem;
+        font-size: 2.8rem;
+    }
+    
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .hardware-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .use-case-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Tablets */
+@media (max-width: 768px) {
+    /* Mobile Navigation */
+    .mobile-menu-toggle {
+        display: flex;
+    }
+    
+    .nav-menu {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 280px;
+        height: 100vh;
+        background: var(--darker-bg);
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        padding: 5rem 2rem 2rem;
+        gap: 0;
+        transition: right 0.3s ease;
+        z-index: 1000;
+        box-shadow: -5px 0 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .nav-menu.active {
+        right: 0;
+    }
+    
+    .nav-menu li {
+        width: 100%;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .nav-menu li:last-child {
+        border-bottom: none;
+    }
+    
+    .nav-menu a {
+        display: block;
+        padding: 1rem 0;
+        font-size: 1.1rem;
+    }
+    
+    .nav-menu a:hover {
+        padding-left: 0.5rem;
+    }
+    
+    .mobile-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    }
+    
+    .mobile-overlay.active {
+        display: block;
+    }
+    
+    /* Hero Section */
+    .hero {
+        padding: 4rem 0;
+        min-height: auto;
+    }
+    
+    .hero .container {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 2rem;
+    }
+    
+    .hero-content {
+        order: 1;
+    }
+    
+    .hero-visual {
+        order: 0;
+    }
+    
+    .hero-title {
+        font-size: 2.2rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+    
+    .cta-buttons {
+        justify-content: center;
     }
     
     .hero-stats {
         justify-content: center;
+        gap: 2rem;
     }
     
-    .demo-content {
-        grid-template-columns: 1fr;
+    .stat-number {
+        font-size: 2rem;
     }
     
-    .demo-layout {
-        grid-template-columns: 1fr;
+    .compass-preview {
+        width: 200px;
+        height: 200px;
+        margin: 0 auto;
     }
     
-    .nav-menu {
-        gap: 1rem;
-        flex-wrap: wrap;
-    }
-    
+    /* Features Section */
     .features-grid,
     .hardware-list,
     .use-case-cards {
         grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .section-title {
+        font-size: 2rem;
+    }
+    
+    .section-subtitle {
+        font-size: 1rem;
+    }
+    
+    /* How It Works */
+    .steps {
+        flex-direction: column;
+        gap: 2rem;
+    }
+    
+    .step {
+        max-width: 100%;
+    }
+    
+    .step-connector {
+        display: none;
+    }
+    
+    /* Demo Page */
+    .demo-container {
+        padding: 2rem 0;
+    }
+    
+    .demo-title {
+        font-size: 1.8rem;
+    }
+    
+    .demo-layout {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .demo-main {
+        order: 0;
+    }
+    
+    .demo-controls {
+        order: 1;
+    }
+    
+    #compassCanvas {
+        width: 300px !important;
+        height: 300px !important;
+    }
+    
+    .compass-info {
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .info-item {
+        flex: 1 1 45%;
+    }
+    
+    .control-section {
+        padding: 1.25rem;
+    }
+    
+    .preset-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Footer */
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .footer-links {
+        justify-content: center;
+    }
+    
+    /* CTA Section */
+    .final-cta {
+        padding: 3rem 0;
+    }
+    
+    .final-cta h2 {
+        font-size: 1.8rem;
+    }
+}
+
+/* Mobile phones */
+@media (max-width: 480px) {
+    /* Container padding */
+    .container {
+        padding: 0 1rem;
+    }
+    
+    /* Navigation */
+    .logo-text {
+        font-size: 1.1rem;
+    }
+    
+    .logo-icon {
+        font-size: 1.5rem;
+    }
+    
+    /* Hero */
+    .hero {
+        padding: 3rem 0;
+    }
+    
+    .hero-title {
+        font-size: 1.8rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 0.9rem;
+    }
+    
+    .btn {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .cta-buttons .btn {
+        width: 100%;
+        max-width: 250px;
+        text-align: center;
+    }
+    
+    .hero-stats {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    
+    .compass-preview {
+        width: 160px;
+        height: 160px;
+    }
+    
+    /* Sections */
+    section {
+        padding: 3rem 0;
+    }
+    
+    .section-title {
+        font-size: 1.6rem;
+    }
+    
+    .section-subtitle {
+        font-size: 0.9rem;
+    }
+    
+    /* Feature Cards */
+    .feature-card,
+    .hardware-item,
+    .use-case-card {
+        padding: 1.25rem;
+    }
+    
+    .feature-icon {
+        font-size: 2rem;
+    }
+    
+    /* Demo Page */
+    .demo-title {
+        font-size: 1.5rem;
+    }
+    
+    .demo-subtitle {
+        font-size: 0.9rem;
+    }
+    
+    #compassCanvas {
+        width: 260px !important;
+        height: 260px !important;
+    }
+    
+    .compass-info {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .info-item {
+        flex: 1 1 100%;
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .info-item:last-child {
+        border-bottom: none;
+    }
+    
+    .control-group label {
+        font-size: 0.9rem;
+    }
+    
+    .gps-group h4 {
+        font-size: 0.9rem;
+    }
+    
+    .input-row {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .input-row input {
+        width: 100%;
+    }
+    
+    /* Demo explanation */
+    .demo-explanation {
+        padding: 1.25rem;
+    }
+    
+    .demo-explanation h3 {
+        font-size: 1.1rem;
+    }
+    
+    .demo-explanation li {
+        font-size: 0.9rem;
+    }
+    
+    /* How It Works */
+    .step-number {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+    }
+    
+    .step h3 {
+        font-size: 1.1rem;
+    }
+    
+    /* Footer */
+    .footer {
+        padding: 1.5rem 0;
+    }
+    
+    .footer-links {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    /* CTA */
+    .final-cta h2 {
+        font-size: 1.5rem;
+    }
+    
+    .final-cta p {
+        font-size: 0.9rem;
+    }
+}
+
+/* Touch-friendly adjustments */
+@media (hover: none) and (pointer: coarse) {
+    .btn {
+        min-height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .nav-menu a {
+        min-height: 48px;
+        display: flex;
+        align-items: center;
+    }
+    
+    input[type="range"] {
+        height: 40px;
+    }
+    
+    input[type="number"] {
+        min-height: 48px;
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+    
+    .preset-btn {
+        min-height: 48px;
+    }
+}
+
+/* Landscape orientation on mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+    .hero {
+        min-height: auto;
+        padding: 2rem 0;
+    }
+    
+    .hero .container {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .hero-stats {
+        flex-direction: row;
+        gap: 1.5rem;
+    }
+    
+    .compass-preview {
+        width: 150px;
+        height: 150px;
+    }
+    
+    .demo-layout {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    #compassCanvas {
+        width: 200px !important;
+        height: 200px !important;
+    }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .compass-needle {
+        animation: none;
+    }
+    
+    .loading-spinner {
+        animation: none;
+        border-top-color: var(--primary-color);
     }
 }

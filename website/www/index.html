@@ -24,6 +24,11 @@
                 <span class="logo-icon">🧭</span>
                 <span class="logo-text">SideQuester</span>
             </div>
+            <button class="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
             <ul class="nav-menu">
                 <li><a href="#features">Features</a></li>
                 <li><a href="#how-it-works">How It Works</a></li>
@@ -36,6 +41,7 @@
                     GitHub
                 </a></li>
             </ul>
+            <div class="mobile-overlay"></div>
         </div>
     </nav>
 
@@ -376,5 +382,38 @@
     </footer>
 
     <script src="assets/animations.js"></script>
+    <script>
+        // Mobile menu toggle
+        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+        const navMenu = document.querySelector('.nav-menu');
+        const mobileOverlay = document.querySelector('.mobile-overlay');
+        
+        function toggleMobileMenu() {
+            const isOpen = navMenu.classList.toggle('active');
+            mobileMenuToggle.classList.toggle('active');
+            mobileOverlay.classList.toggle('active');
+            mobileMenuToggle.setAttribute('aria-expanded', isOpen);
+            document.body.style.overflow = isOpen ? 'hidden' : '';
+        }
+        
+        mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+        mobileOverlay.addEventListener('click', toggleMobileMenu);
+        
+        // Close menu when clicking a link
+        navMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (navMenu.classList.contains('active')) {
+                    toggleMobileMenu();
+                }
+            });
+        });
+        
+        // Close menu on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && navMenu.classList.contains('active')) {
+                toggleMobileMenu();
+            }
+        });
+    </script>
 </body>
 </html>
