@@ -1,21 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="SideQuester - Never lose your friends at festivals. GPS-based friend finder using LoRa radio technology.">
+    <meta name="description"
+        content="SideQuester - Never lose your friends at festivals. GPS-based friend finder using LoRa radio technology.">
     <meta name="keywords" content="GPS tracker, LoRa, festival gadget, friend finder, ESP32, off-grid communication">
     <meta name="author" content="AmrEslim">
-    
+
     <!-- Open Graph / Social Media -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="SideQuester - Your Ultimate Friend Finder">
-    <meta property="og:description" content="GPS-based friend finder for festivals and off-grid adventures. No cellular network required.">
+    <meta property="og:description"
+        content="GPS-based friend finder for festivals and off-grid adventures. No cellular network required.">
     <meta property="og:url" content="https://amreslim.github.io/SideQuester/">
-    
+
     <title>SideQuester - Your Ultimate Friend Finder</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="styles.css">
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
 </head>
+
 <body>
     <!-- Navigation -->
     <nav class="navbar">
@@ -35,11 +54,12 @@
                 <li><a href="demo.html" class="demo-link">Live Demo</a></li>
                 <li><a href="#hardware">Hardware</a></li>
                 <li><a href="https://github.com/AmrEslim/SideQuester" target="_blank" class="github-link">
-                    <svg height="24" width="24" viewBox="0 0 16 16" fill="currentColor">
-                        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
-                    </svg>
-                    GitHub
-                </a></li>
+                        <svg height="24" width="24" viewBox="0 0 16 16" fill="currentColor">
+                            <path
+                                d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+                        </svg>
+                        GitHub
+                    </a></li>
             </ul>
             <div class="mobile-overlay"></div>
         </div>
@@ -87,43 +107,50 @@
         </div>
     </section>
 
+    <!-- LoRa Animation Section -->
+    <section id="animation-section" class="animation-section">
+        <div id="lora-animation" class="animation-container">
+            <!-- Three.js Canvas will be mounted here -->
+        </div>
+    </section>
+
     <!-- Features Section -->
     <section id="features" class="features">
         <div class="container">
             <h2 class="section-title">Why SideQuester?</h2>
             <p class="section-subtitle">Built for real-world off-grid adventures</p>
-            
+
             <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-icon">🧭</div>
                     <h3>Real-time Direction</h3>
                     <p>Your device always points to your friend's location with precise heading calculation</p>
                 </div>
-                
+
                 <div class="feature-card">
                     <div class="feature-icon">📡</div>
                     <h3>Long-Range LoRa</h3>
                     <p>Up to 3km communication range with low power consumption</p>
                 </div>
-                
+
                 <div class="feature-card">
                     <div class="feature-icon">🛰️</div>
                     <h3>GPS Tracking</h3>
                     <p>Precise satellite positioning with live coordinate sharing</p>
                 </div>
-                
+
                 <div class="feature-card">
                     <div class="feature-icon">📶</div>
                     <h3>Offline First</h3>
                     <p>No cellular network, WiFi, or internet required</p>
                 </div>
-                
+
                 <div class="feature-card">
                     <div class="feature-icon">🔋</div>
                     <h3>Battery Powered</h3>
                     <p>Portable design for extended outdoor adventures</p>
                 </div>
-                
+
                 <div class="feature-card">
                     <div class="feature-icon">🌍</div>
                     <h3>Open Source</h3>
@@ -138,7 +165,7 @@
         <div class="container">
             <h2 class="section-title">How It Works</h2>
             <p class="section-subtitle">Simple technology, powerful results</p>
-            
+
             <div class="steps">
                 <div class="step">
                     <div class="step-number">1</div>
@@ -147,7 +174,7 @@
                         <p>Each device gets its precise location from satellites</p>
                     </div>
                 </div>
-                
+
                 <div class="step">
                     <div class="step-number">2</div>
                     <div class="step-content">
@@ -155,7 +182,7 @@
                         <p>Coordinates are transmitted via long-range radio</p>
                     </div>
                 </div>
-                
+
                 <div class="step">
                     <div class="step-number">3</div>
                     <div class="step-content">
@@ -163,7 +190,7 @@
                         <p>Device calculates direction and distance to your friend</p>
                     </div>
                 </div>
-                
+
                 <div class="step">
                     <div class="step-number">4</div>
                     <div class="step-content">
@@ -172,7 +199,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="tech-stack">
                 <h3>Built With</h3>
                 <div class="tech-tags">
@@ -193,7 +220,8 @@
             <div class="demo-content">
                 <div class="demo-text">
                     <h2>See It In Action</h2>
-                    <p>Try our interactive compass demo powered by WebAssembly. Experience the same algorithms running on the actual hardware.</p>
+                    <p>Try our interactive compass demo powered by WebAssembly. Experience the same algorithms running
+                        on the actual hardware.</p>
                     <ul class="demo-features">
                         <li>✓ Real-time heading calculation</li>
                         <li>✓ Distance and bearing computation</li>
@@ -225,7 +253,7 @@
         <div class="container">
             <h2 class="section-title">Hardware Requirements</h2>
             <p class="section-subtitle">Everything you need to build your own SideQuester</p>
-            
+
             <div class="hardware-list">
                 <div class="hardware-item">
                     <div class="hardware-icon">💻</div>
@@ -235,7 +263,7 @@
                         <span class="price">~$5</span>
                     </div>
                 </div>
-                
+
                 <div class="hardware-item">
                     <div class="hardware-icon">📡</div>
                     <div class="hardware-details">
@@ -244,7 +272,7 @@
                         <span class="price">~$12</span>
                     </div>
                 </div>
-                
+
                 <div class="hardware-item">
                     <div class="hardware-icon">🛰️</div>
                     <div class="hardware-details">
@@ -253,7 +281,7 @@
                         <span class="price">~$8</span>
                     </div>
                 </div>
-                
+
                 <div class="hardware-item">
                     <div class="hardware-icon">🧭</div>
                     <div class="hardware-details">
@@ -262,7 +290,7 @@
                         <span class="price">~$3</span>
                     </div>
                 </div>
-                
+
                 <div class="hardware-item">
                     <div class="hardware-icon">📱</div>
                     <div class="hardware-details">
@@ -271,7 +299,7 @@
                         <span class="price">~$10</span>
                     </div>
                 </div>
-                
+
                 <div class="hardware-item">
                     <div class="hardware-icon">🔋</div>
                     <div class="hardware-details">
@@ -281,13 +309,14 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="hardware-total">
                 <p>Total Cost per Device: <strong>~$53</strong></p>
                 <p class="hardware-note">You need 2 devices (one for you, one for your friend)</p>
             </div>
-            
-            <a href="https://github.com/AmrEslim/SideQuester/blob/main/docs/HARDWARE_GUIDE.md" class="btn btn-secondary">View Full Hardware Guide</a>
+
+            <a href="https://github.com/AmrEslim/SideQuester/blob/main/docs/HARDWARE_GUIDE.md"
+                class="btn btn-secondary">View Full Hardware Guide</a>
         </div>
     </section>
 
@@ -295,26 +324,26 @@
     <section class="use-cases">
         <div class="container">
             <h2 class="section-title">Perfect For</h2>
-            
+
             <div class="use-case-cards">
                 <div class="use-case-card">
                     <div class="use-case-emoji">🎪</div>
                     <h3>Festivals & Concerts</h3>
                     <p>Never lose your group in crowded venues where cell towers are overloaded</p>
                 </div>
-                
+
                 <div class="use-case-card">
                     <div class="use-case-emoji">🏕️</div>
                     <h3>Camping & Hiking</h3>
                     <p>Stay connected in remote areas with no cellular coverage</p>
                 </div>
-                
+
                 <div class="use-case-card">
                     <div class="use-case-emoji">⛷️</div>
                     <h3>Skiing & Snowboarding</h3>
                     <p>Track your friends across the mountain slopes</p>
                 </div>
-                
+
                 <div class="use-case-card">
                     <div class="use-case-emoji">🚴</div>
                     <h3>Group Adventures</h3>
@@ -344,27 +373,33 @@
                     <h3>🧭 SideQuester</h3>
                     <p>Your ultimate friend finder for off-grid adventures</p>
                 </div>
-                
+
                 <div class="footer-section">
                     <h4>Links</h4>
                     <ul>
                         <li><a href="https://github.com/AmrEslim/SideQuester">GitHub Repository</a></li>
-                        <li><a href="https://github.com/AmrEslim/SideQuester/blob/main/docs/HARDWARE_GUIDE.md">Hardware Guide</a></li>
-                        <li><a href="https://github.com/AmrEslim/SideQuester/blob/main/docs/SOFTWARE_GUIDE.md">Software Guide</a></li>
-                        <li><a href="https://github.com/AmrEslim/SideQuester/blob/main/CONTRIBUTING.md">Contributing</a></li>
+                        <li><a href="https://github.com/AmrEslim/SideQuester/blob/main/docs/HARDWARE_GUIDE.md">Hardware
+                                Guide</a></li>
+                        <li><a href="https://github.com/AmrEslim/SideQuester/blob/main/docs/SOFTWARE_GUIDE.md">Software
+                                Guide</a></li>
+                        <li><a href="https://github.com/AmrEslim/SideQuester/blob/main/CONTRIBUTING.md">Contributing</a>
+                        </li>
                     </ul>
                 </div>
-                
+
                 <div class="footer-section">
                     <h4>Resources</h4>
                     <ul>
                         <li><a href="demo.html">Interactive Demo</a></li>
-                        <li><a href="https://github.com/AmrEslim/SideQuester/blob/main/docs/TROUBLESHOOTING.md">Troubleshooting</a></li>
-                        <li><a href="https://github.com/AmrEslim/SideQuester/blob/main/docs/SAFETY.md">Safety Guide</a></li>
+                        <li><a
+                                href="https://github.com/AmrEslim/SideQuester/blob/main/docs/TROUBLESHOOTING.md">Troubleshooting</a>
+                        </li>
+                        <li><a href="https://github.com/AmrEslim/SideQuester/blob/main/docs/SAFETY.md">Safety Guide</a>
+                        </li>
                         <li><a href="https://github.com/AmrEslim/SideQuester/issues">Report Issues</a></li>
                     </ul>
                 </div>
-                
+
                 <div class="footer-section">
                     <h4>Connect</h4>
                     <ul>
@@ -373,7 +408,7 @@
                     </ul>
                 </div>
             </div>
-            
+
             <div class="footer-bottom">
                 <p>Built with ❤️ for the maker community</p>
                 <p>Licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a></p>
@@ -382,12 +417,20 @@
     </footer>
 
     <script src="assets/animations.js"></script>
+    <script type="module">
+        import { initLoRaAnimation } from './lora-animation.js';
+
+        // Initialize animation when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            initLoRaAnimation('lora-animation');
+        });
+    </script>
     <script>
         // Mobile menu toggle
         const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
         const navMenu = document.querySelector('.nav-menu');
         const mobileOverlay = document.querySelector('.mobile-overlay');
-        
+
         function toggleMobileMenu() {
             const isOpen = navMenu.classList.toggle('active');
             mobileMenuToggle.classList.toggle('active');
@@ -395,10 +438,10 @@
             mobileMenuToggle.setAttribute('aria-expanded', isOpen);
             document.body.style.overflow = isOpen ? 'hidden' : '';
         }
-        
+
         mobileMenuToggle.addEventListener('click', toggleMobileMenu);
         mobileOverlay.addEventListener('click', toggleMobileMenu);
-        
+
         // Close menu when clicking a link
         navMenu.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', () => {
@@ -407,7 +450,7 @@
                 }
             });
         });
-        
+
         // Close menu on escape key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && navMenu.classList.contains('active')) {
@@ -416,4 +459,5 @@
         });
     </script>
 </body>
+
 </html>

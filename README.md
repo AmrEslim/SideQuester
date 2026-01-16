@@ -4,6 +4,8 @@
 
 SideQuester is a dual ESP32-based compass system that helps you stay connected with friends in crowded festivals, remote camping sites, or any location where cellular networks fail. Using GPS coordinates transmitted via LoRa radio, each device acts as a compass that always points toward your companion.
 
+🌐 **[Visit the Website](https://amreslim.github.io/SideQuester/)** | 🎮 **[Try Interactive Demo](https://amreslim.github.io/SideQuester/demo.html)**
+
 ## ✨ Key Features
 
 - 🧭 **Real-time Direction Pointing** - Always points to your friend's location
